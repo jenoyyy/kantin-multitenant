@@ -1,13 +1,13 @@
 <?php
 
-use App\Providers\AppServiceProvider;
-use App\Providers\VoltServiceProvider;
 use App\Providers\AdminServiceProvider;
+use App\Providers\AppServiceProvider;
 use App\Providers\CatalogServiceProvider;
+use App\Providers\KitchenServiceProvider;
 use App\Providers\OrderingServiceProvider;
 use App\Providers\PaymentsServiceProvider;
-use App\Providers\KitchenServiceProvider;
 use App\Providers\ReportingServiceProvider;
+use App\Providers\VoltServiceProvider;
 
 return [
     AppServiceProvider::class,
