@@ -12,7 +12,7 @@ new #[Layout('layouts.guest')] class extends Component
     /**
      * Handle an incoming authentication request.
      */
-    public function login(): void
+       public function login(): void
     {
         $this->validate();
 
@@ -20,7 +20,15 @@ new #[Layout('layouts.guest')] class extends Component
 
         Session::regenerate();
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        $user = auth()->user();
+
+        $redirectTo = match ($user->role) {
+            'tenant' => route('tenant.dashboard', ['tenant' => $user->tenant_slug ?? 'default'], absolute: false),
+            'admin' => route('admin.dashboard', absolute: false),
+            default => route('dashboard', absolute: false),
+        };
+
+        $this->redirect($redirectTo, navigate: true);
     }
 }; ?>
 
