@@ -33,3 +33,25 @@
 
 ## Cross-cutting (bukan modul bisnis, dipakai semua)
 - FR-TEN-01 Autentikasi & otorisasi
+
+## Aturan Dependensi Antarmodul
+
+- Setiap modul (Admin, Catalog, Ordering, Payments, Kitchen, Reporting) tidak boleh mengakses
+  model/tabel milik modul lain secara langsung.
+- Komunikasi antarmodul harus lewat Service atau Action yang disediakan modul tujuan (kontrak
+  eksplisit), bukan lewat query database langsung ke tabel modul lain.
+- Contoh: modul Ordering tidak mengakses tabel `ledger_entries` (milik Payments) secara langsung;
+  Ordering memanggil service Payments jika perlu.
+- Autentikasi (login, role, status akun) bersifat cross-cutting — dipakai semua modul, tidak
+  dimiliki satu modul bisnis manapun.
+
+## Konvensi Penamaan
+
+- **Route name**: prefix sesuai konteks — `customer.*`, `tenant.*`, `admin.*` (contoh:
+  `customer.home`, `tenant.dashboard`, `admin.dashboard`).
+- **Namespace modul**: `App\Modules\{NamaModul}\{Actions|Data|Services}` (contoh:
+  `App\Modules\Catalog\Services`).
+- **Service Provider**: `App\Providers\{NamaModul}ServiceProvider` (contoh:
+  `AdminServiceProvider`), didaftarkan di `bootstrap/providers.php`.
+- **Layout Blade**: `resources/views/layouts/{customer|tenant|admin}.blade.php`.
+- **View per konteks**: `resources/views/{customer|tenant|admin}/{nama-halaman}.blade.php`.
