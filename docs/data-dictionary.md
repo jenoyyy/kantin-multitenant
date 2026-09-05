@@ -6,17 +6,21 @@
 - canteens
 - tenants
 - users
-- (role, rekening bank — dilengkapi di Tahap 2)
+- tenant_user_roles
+- balances
+- bank_accounts
 
 ### 2. Meja & Session (tenant-owned / platform-scoped campuran)
-- tables
-- customer_sessions
+- dining_tables (platform-scoped, milik canteen bukan tenant)
+- table_tokens
+- table_sessions
+- operating_hours
 
 ### 3. Katalog & Komisi (tenant-owned)
-- categories
+- menu_categories
 - menus
-- modifiers
-- commission_schemes
+- modifier_groups
+- order_item_modifiers
 
 ### 4. Order (campuran)
 - orders (platform-scoped, TIDAK punya tenant_id)
@@ -24,11 +28,35 @@
 - order_items (tenant-owned)
 
 ### 5. Payment & Ledger (platform-scoped / tenant-owned campuran)
-- payments (platform-scoped)
-- payment_events (platform-scoped)
-- ledger_entries (tenant-owned)
-- withdrawals (tenant-owned)
+- payments
+- payment_attempts
+- payment_events
+- ledger
+- withdrawals
 
 ### 6. Outbox & Audit (platform-scoped)
+- outbox
 - notification_deliveries
 - audit_logs
+
+## Catatan Penyimpangan dari ERD Baseline (Pertemuan 3)
+
+Selama implementasi migration, ditemukan beberapa penyesuaian dari draft awal / ERD baseline Fase 0:
+
+- Nama tabel di draft awal Tahap 1 (`tables`, `categories`, `modifiers`, `commission_schemes`, `ledger_entries`, `customer_sessions`) disesuaikan menjadi nama sebenarnya di migration: `dining_tables`, `menu_categories`, `modifier_groups`, `ledger`, `table_sessions`.
+- **`dining_tables`**: terhubung ke `canteen_id` (bukan `tenant_id`), dengan kolom `label` (bukan `code`) dan `status` — karena 1 meja fisik bisa dipakai lintas tenant dalam satu kantin yang sama.
+- Tidak ditemukan tabel `commission_schemes` terpisah pada migration yang sudah dibuat — perlu dicek apakah skema komisi digabung ke tabel lain atau memang belum dibuat.
+- **`order_items`**: awalnya tidak memiliki kolom `tenant_id` langsung (hanya `tenant_order_id`), sehingga FK ke `menus` cuma memvalidasi `menu_id` exist tanpa memastikan tenant yang sama. Ditambahkan migrasi terpisah (`2026_09_05_add_tenant_id_to_order_items_table`) untuk menambahkan kolom `tenant_id` (di-backfill dari `tenant_orders`) dan FK komposit `(tenant_id, menu_id)` → `menus(tenant_id, id)` dengan `restrictOnDelete()`. Sudah diverifikasi manual: insert `order_item` dengan `tenant_id` dan `menu_id` dari tenant berbeda ditolak database dengan `ERROR 1452`.
+
+## Mapping ERD → Model Eloquent
+
+| Tabel               | Model            | Relasi Utama                          |
+|---------------------|------------------|----------------------------------------|
+| canteens             | Canteen          | hasMany Tenant, hasMany DiningTable    |
+| tenants              | Tenant           | belongsTo Canteen                      |
+| menu_categories      | MenuCategory     | belongsTo Tenant, hasMany Menu         |
+| menus                | Menu             | belongsTo Tenant, belongsTo MenuCategory, hasMany OrderItem |
+| dining_tables        | DiningTable      | belongsTo Canteen, hasMany TableSession |
+| orders               | Order            | hasMany TenantOrder                    |
+| tenant_orders        | TenantOrder      | belongsTo Order, belongsTo Tenant, hasMany OrderItem |
+| order_items          | OrderItem        | belongsTo TenantOrder, belongsTo Menu  |

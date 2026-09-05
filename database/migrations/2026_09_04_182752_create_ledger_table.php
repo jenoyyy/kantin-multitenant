@@ -6,25 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-  public function up(): void
-{
-    Schema::create('withdrawals', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('tenant_id')->constrained()->restrictOnDelete();
-        $table->unsignedBigInteger('amount');
-        $table->enum('status', ['pending','processed','failed'])->default('pending');
-        $table->string('reference', 100)->unique(); // ID unik untuk tracking
-        $table->timestamps(6);
-    });
-}
+    public function up(): void
+    {
+        Schema::create('ledger', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tenant_id')->constrained()->restrictOnDelete();
+            $table->string('entry_type', 30);
+            $table->bigInteger('amount');
+            $table->json('metadata')->nullable();
+            $table->timestamps(6);
+        });
+    }
 
-public function down(): void
-{
-    Schema::dropIfExists('withdrawals');
-}
-
-
+    public function down(): void
+    {
+        Schema::dropIfExists('ledger');
+    }
 };

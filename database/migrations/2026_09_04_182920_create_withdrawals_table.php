@@ -6,20 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('withdrawals', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->foreignId('tenant_id')->constrained()->restrictOnDelete();
+            $table->unsignedBigInteger('amount');
+            $table->enum('status', ['pending', 'processed', 'failed'])->default('pending');
+            $table->string('reference', 100)->unique();
+            $table->timestamps(6);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('withdrawals');
