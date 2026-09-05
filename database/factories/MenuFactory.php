@@ -17,12 +17,9 @@ class MenuFactory extends Factory
      */
   public function definition(): array
 {
-    $tenant = \App\Models\Tenant::factory()->create();
-    $category = \App\Models\MenuCategory::factory()->for($tenant)->create();
-
     return [
-        'tenant_id' => $tenant->id,
-        'menu_category_id' => $category->id,
+        'tenant_id' => \App\Models\Tenant::factory(),
+        'menu_category_id' => \App\Models\MenuCategory::factory(),
         'name' => $this->faker->words(2, true),
         'price_amount' => $this->faker->numberBetween(5000, 50000),
         'is_available' => true,
