@@ -30,3 +30,11 @@ npm run build
 ## Troubleshooting
 - Jika Redis error, pastikan service Redis (via Servbay) sudah berjalan.
 - Jika vendor\bin\pint --test gagal, jalankan vendor\bin\pint untuk membenahi otomatis.
+## Reset Database (Development Only)
+
+⚠️ Perintah berikut menghapus SELURUH tabel pada koneksi database yang aktif. 
+Pastikan `.env` mengarah ke database development, bukan production, sebelum menjalankannya.
+
+    php artisan migrate:fresh --seed
+
+Gunakan perintah ini bila ingin mengulang seluruh migration dan seeder dari database kosong.
