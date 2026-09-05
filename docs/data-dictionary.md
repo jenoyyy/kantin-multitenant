@@ -45,9 +45,8 @@ Selama implementasi migration, ditemukan beberapa penyesuaian dari draft awal / 
 
 - Nama tabel di draft awal Tahap 1 (`tables`, `categories`, `modifiers`, `commission_schemes`, `ledger_entries`, `customer_sessions`) disesuaikan menjadi nama sebenarnya di migration: `dining_tables`, `menu_categories`, `modifier_groups`, `ledger`, `table_sessions`.
 - **`dining_tables`**: terhubung ke `canteen_id` (bukan `tenant_id`), dengan kolom `label` (bukan `code`) dan `status` — karena 1 meja fisik bisa dipakai lintas tenant dalam satu kantin yang sama.
-- Tidak ditemukan tabel `commission_schemes` terpisah pada migration yang sudah dibuat — perlu dicek apakah skema komisi digabung ke tabel lain atau memang belum dibuat.
+- **`commission_schemes`**: dikonfirmasi belum dibuat (`Schema::hasTable('commission_schemes')` mengembalikan `false`). Modul mensyaratkan skema komisi effective-dated (tarif dengan masa berlaku) pada Tahap 3, sehingga ini merupakan gap yang perlu ditindaklanjuti pada iterasi berikutnya — bukan penyesuaian penamaan.
 - **`order_items`**: awalnya tidak memiliki kolom `tenant_id` langsung (hanya `tenant_order_id`), sehingga FK ke `menus` cuma memvalidasi `menu_id` exist tanpa memastikan tenant yang sama. Ditambahkan migrasi terpisah (`2026_09_05_add_tenant_id_to_order_items_table`) untuk menambahkan kolom `tenant_id` (di-backfill dari `tenant_orders`) dan FK komposit `(tenant_id, menu_id)` → `menus(tenant_id, id)` dengan `restrictOnDelete()`. Sudah diverifikasi manual: insert `order_item` dengan `tenant_id` dan `menu_id` dari tenant berbeda ditolak database dengan `ERROR 1452`.
-
 ## Mapping ERD → Model Eloquent
 
 | Tabel               | Model            | Relasi Utama                          |
