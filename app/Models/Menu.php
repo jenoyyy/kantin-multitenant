@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Menu extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Models\Concerns\BelongsToTenant;
 
     protected function casts(): array
     {

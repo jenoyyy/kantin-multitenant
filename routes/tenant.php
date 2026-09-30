@@ -1,7 +1,7 @@
 <?php
 
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/dashboard', function (string $tenant) {
-    return view('tenant.dashboard', ['tenant' => $tenant]);
-})->name('dashboard');
+Route::get('/dashboard', fn (Tenant $tenant) => view('tenant.dashboard', ['tenant' => $tenant]))
+    ->name('dashboard');

@@ -13,12 +13,12 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 // Route pelanggan: publik, tidak perlu login
-Route::prefix('kantin/{canteen:slug}')
+Route::prefix('kantin/{canteen:code}')
     ->name('customer.')
     ->group(base_path('routes/customer.php'));
 
 // Route tenant (operator): wajib login
-Route::middleware(['auth', 'verified'])
+Route::middleware(['auth', 'verified', 'tenant'])
     ->prefix('tenant/{tenant:slug}')
     ->scopeBindings()
     ->name('tenant.')

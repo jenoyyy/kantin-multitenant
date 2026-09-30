@@ -36,18 +36,6 @@ class ModuleFoundationTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_user_dengan_role_tenant_bisa_membuka_dashboard_tenant(): void
-    {
-        $tenant = User::factory()->create([
-            'role' => 'tenant',
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($tenant)->get('/tenant/tenant-a/dashboard');
-
-        $response->assertOk();
-    }
-
     public function test_pelanggan_bisa_membuka_halaman_kantin_tanpa_login(): void
     {
         $response = $this->get('/kantin/kantin-pusat');

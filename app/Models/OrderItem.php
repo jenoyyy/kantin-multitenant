@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderItem extends Model
+class TenantOrder extends Model
 {
-    //
+    use BelongsToTenant;
 }

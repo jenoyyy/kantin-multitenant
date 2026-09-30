@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 
-class TenantOrder extends Model
+class ModifierGroup extends Model
 {
-    //
+    use BelongsToTenant;
 }

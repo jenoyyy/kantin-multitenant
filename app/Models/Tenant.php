@@ -22,4 +22,9 @@ class Tenant extends Model
     {
         return $this->belongsTo(Canteen::class);
     }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
 }
