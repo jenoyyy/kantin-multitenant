@@ -11,5 +11,6 @@ class TenantUserRole extends Model
     protected $fillable = [
         'tenant_id',
         'user_id',
+        'role',
     ];
 }

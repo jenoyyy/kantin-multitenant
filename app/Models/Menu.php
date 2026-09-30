@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Menu extends Model
 {
-    use HasFactory, \App\Models\Concerns\BelongsToTenant;
+    use HasFactory, BelongsToTenant;
+
+    protected $fillable = [
+        'name',
+        'price_amount',
+        'is_available',
+    ];
 
     protected function casts(): array
     {

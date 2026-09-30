@@ -1,0 +1,37 @@
+[33m2f237fd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m wip(tenancy): context, middleware, BelongsToTenant trait
+[33m0e560e4[m docs: confirm commission_schemes table is missing
+[33mbb23ffb[m docs: add database reset warning to README
+[33m88b9191[m feat(database): implement multi-tenant transactional schema
+[33m64018d7[m feat(database) : add DemoCanteenSeeder for demo data
+[33me3cab3f[m feat(database): add factories for core models
+[33m4867941[m feat(database): add core Eloquent models with relationships
+[33m29e2f8c[m feat(database): complete transaction & logging tables (payments, ledger, withdrawals, outbox, notification_deliveries, audit_logs)
+[33m30a410d[m feat(database): add notification_deliveries table
+[33m83a3a9e[m feat(database): add outbox table
+[33m7b1a719[m feat(database): add withdrawals table
+[33ma21c3f4[m feat(database): add ledger table
+[33mca37f96[m feat(database): add payment_events table
+[33me7befd9[m feat(database): add payment_attempts table
+[33m2eeb9bf[m feat(database): add payments table
+[33mc2a933a[m feat(database): add order_item_modifiers table
+[33mb76e92e[m feat(database): add order_items table
+[33m44b4a18[m feat(database): add orders table
+[33mfd7bd4f[m feat(database): implement dining tables, tokens, sessions, menus, modifier groups, commissions
+[33mc23c5d3[m feat(database): tahap 2 - migrasi tenancy dan identitas
+[33m08675bf[m docs(database): audit ERD and map baseline tables to domains
+[33m9501568[m feat(core): establish modular monolith and UI shells
+[33m254d835[m test(core): add foundation tests for auth and routing
+[33mca32896[m feat(auth): extend user auth with role/status and role-based redirect
+[33med2cf20[m feat(ui): build customer, tenant, and admin layouts
+[33md61fc6e[m feat(core): setup context-based routing for customer, tenant, admin
+[33m2d6ec15[m feat(core): setup module structure and providers
+[33m1d8f3f5[m chore: add environment check script
+[33mc854d9c[m chore(setup): bootstrap Laravel 13 development environment
+[33mf9a1e3b[m chore: add quality gate baseline (editorconfig, pint fixes)
+[33m930c1e5[m feat(setup): instal dan konfigurasi laravel reverb
+[33me7d041c[m feat(setup): instal livewire 4.0
+[33m9914017[m docs(env): update env.example sesuai konfigurasi mariadb dan redis
+[33m65e8b04[m feat(setup): install laravel 13 dengan livewire dan volt starter kit
+[33m46d1624[m docs(sql): tambah file sql baseline kosong, menyusul diisi
+[33m3c67cd8[m docs(erd): tambah ERD kantin multi-tenant
+[33mde3143f[m docs(init): tambah SRS dan mockup awal
