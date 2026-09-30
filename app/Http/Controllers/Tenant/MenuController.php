@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Tenant;
 
 use App\Models\Menu;
+use App\Models\Tenant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 final class MenuController
 {
-    public function index(): JsonResponse
+    public function index(Tenant $tenant): JsonResponse
     {
         Gate::authorize('viewAny', Menu::class);
 
@@ -18,14 +19,14 @@ final class MenuController
         );
     }
 
-    public function show(Menu $menu): JsonResponse
+    public function show(Tenant $tenant, Menu $menu): JsonResponse
     {
         Gate::authorize('view', $menu);
 
         return response()->json($menu->only(['id', 'name', 'price_amount', 'is_available']));
     }
 
-    public function update(Request $request, Menu $menu): JsonResponse
+    public function update(Request $request, Tenant $tenant, Menu $menu): JsonResponse
     {
         Gate::authorize('update', $menu);
 
@@ -40,7 +41,7 @@ final class MenuController
         return response()->json($menu->only(['id', 'name', 'price_amount', 'is_available']));
     }
 
-    public function destroy(Menu $menu): JsonResponse
+    public function destroy(Tenant $tenant, Menu $menu): JsonResponse
     {
         Gate::authorize('delete', $menu);
 

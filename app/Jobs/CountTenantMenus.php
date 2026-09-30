@@ -21,6 +21,10 @@ class CountTenantMenus implements ShouldQueue
     {
         $tenant = Tenant::query()->findOrFail($this->tenantId);
 
+        if (! $tenant->isActive()) {
+            return;
+        }
+
         $context = app(TenantContext::class);
         $context->set($tenant);
 
