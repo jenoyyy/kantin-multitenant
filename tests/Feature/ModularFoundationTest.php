@@ -6,6 +6,12 @@ use App\Models\Canteen;
 use App\Models\Tenant;
 use App\Models\TenantUserRole;
 use App\Models\User;
+use App\Providers\AdminServiceProvider;
+use App\Providers\CatalogServiceProvider;
+use App\Providers\KitchenServiceProvider;
+use App\Providers\OrderingServiceProvider;
+use App\Providers\PaymentsServiceProvider;
+use App\Providers\ReportingServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -34,7 +40,7 @@ class ModularFoundationTest extends TestCase
         $user = User::factory()->create();
         $tenant = Tenant::factory()->create();
 
-        $role = new TenantUserRole();
+        $role = new TenantUserRole;
         $role->user_id = $user->id;
         $role->tenant_id = $tenant->id;
         $role->save();
@@ -91,7 +97,7 @@ class ModularFoundationTest extends TestCase
             'status' => 'suspended',
         ]);
 
-        $role = new TenantUserRole();
+        $role = new TenantUserRole;
         $role->user_id = $user->id;
         $role->tenant_id = $tenant->id;
         $role->save();
@@ -106,12 +112,12 @@ class ModularFoundationTest extends TestCase
     public function test_all_module_providers_are_registered(): void
     {
         $providers = [
-            \App\Providers\AdminServiceProvider::class,
-            \App\Providers\CatalogServiceProvider::class,
-            \App\Providers\OrderingServiceProvider::class,
-            \App\Providers\PaymentsServiceProvider::class,
-            \App\Providers\KitchenServiceProvider::class,
-            \App\Providers\ReportingServiceProvider::class,
+            AdminServiceProvider::class,
+            CatalogServiceProvider::class,
+            OrderingServiceProvider::class,
+            PaymentsServiceProvider::class,
+            KitchenServiceProvider::class,
+            ReportingServiceProvider::class,
         ];
 
         foreach ($providers as $provider) {

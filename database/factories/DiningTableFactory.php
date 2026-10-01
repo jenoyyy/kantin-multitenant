@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Canteen;
 use App\Models\DiningTable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,12 +16,12 @@ class DiningTableFactory extends Factory
      *
      * @return array<string, mixed>
      */
-  public function definition(): array
-{
-    return [
-        'canteen_id' => \App\Models\Canteen::factory(),
-        'label' => strtoupper($this->faker->unique()->lexify('T-??')),
-        'status' => 'available',
-    ];
-}
+    public function definition(): array
+    {
+        return [
+            'canteen_id' => Canteen::factory(),
+            'label' => strtoupper($this->faker->unique()->lexify('T-??')),
+            'status' => 'available',
+        ];
+    }
 }

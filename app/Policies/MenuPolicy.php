@@ -11,6 +11,7 @@ class MenuPolicy
     use ChecksTenantRole;
 
     private const SEMUA = ['owner', 'staff', 'cashier'];
+
     private const PENGELOLA = ['owner', 'staff'];
 
     public function viewAny(User $user): bool

@@ -21,10 +21,15 @@ class TenantIsolationTest extends TestCase
     use RefreshDatabase;
 
     private Tenant $tenantA;
+
     private Tenant $tenantB;
+
     private User $ownerA;
+
     private User $ownerB;
+
     private Menu $menuA;
+
     private Menu $menuB;
 
     protected function setUp(): void
@@ -52,7 +57,7 @@ class TenantIsolationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $member = new TenantUserRole();
+        $member = new TenantUserRole;
         $member->tenant_id = $tenant->id;
         $member->user_id = $user->id;
         $member->role = $role;
@@ -214,7 +219,7 @@ class TenantIsolationTest extends TestCase
     {
         app(TenantContext::class)->set($this->tenantA);
 
-        $menu = new Menu();
+        $menu = new Menu;
         $menu->menu_category_id = $this->menuA->menu_category_id;
         $menu->name = 'Menu Baru';
         $menu->price_amount = 10000;
@@ -228,7 +233,7 @@ class TenantIsolationTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        $menu = new Menu();
+        $menu = new Menu;
         $menu->menu_category_id = $this->menuA->menu_category_id;
         $menu->name = 'Tanpa Tenant';
         $menu->price_amount = 10000;

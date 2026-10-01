@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->scoped(
             TenantContext::class,
-            fn (): TenantContext => new TenantContext(),
+            fn (): TenantContext => new TenantContext,
         );
     }
 

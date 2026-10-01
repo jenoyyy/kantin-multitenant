@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\Actions\Logout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -49,7 +50,7 @@ class ModuleConventionTest extends TestCase
     public function test_livewire_namespace_is_registered(): void
     {
         $this->assertTrue(
-            class_exists(\App\Livewire\Actions\Logout::class)
+            class_exists(Logout::class)
         );
     }
 

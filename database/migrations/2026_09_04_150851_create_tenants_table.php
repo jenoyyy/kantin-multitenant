@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('display_name', 120);
             $table->enum('status', ['pending', 'active', 'suspended', 'inactive'])->default('pending');
             $table->timestamps(6);
-           $table->softDeletes('deleted_at', 6);
+            $table->softDeletes('deleted_at', 6);
 
             $table->unique(['canteen_id', 'code']);
             $table->unique(['canteen_id', 'slug']);

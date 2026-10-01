@@ -15,12 +15,12 @@ class CanteenFactory extends Factory
      *
      * @return array<string, mixed>
      */
-  public function definition(): array
-{
-    return [
-        'code' => strtoupper($this->faker->unique()->lexify('CNT-???')),
-        'name' => $this->faker->company() . ' Canteen',
-        'status' => 'active',
-    ];
-}
+    public function definition(): array
+    {
+        return [
+            'code' => strtoupper($this->faker->unique()->lexify('CNT-???')),
+            'name' => $this->faker->company().' Canteen',
+            'status' => 'active',
+        ];
+    }
 }

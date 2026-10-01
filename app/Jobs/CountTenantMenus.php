@@ -14,8 +14,7 @@ class CountTenantMenus implements ShouldQueue
 
     public function __construct(
         public int $tenantId,
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {
