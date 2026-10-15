@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tenant extends Model
@@ -37,6 +38,26 @@ class Tenant extends Model
     public function tenantOrders(): HasMany
     {
         return $this->hasMany(TenantOrder::class);
+    }
+
+    public function commissionSchemes(): HasMany
+    {
+        return $this->hasMany(CommissionScheme::class);
+    }
+
+    public function tenantRoles(): HasMany
+    {
+        return $this->hasMany(TenantUserRole::class);
+    }
+
+        public function bankAccounts(): HasMany
+    {
+        return $this->hasMany(TenantBankAccount::class);
+    }
+    
+    public function balance(): HasOne
+    {
+        return $this->hasOne(TenantBalance::class);
     }
 
     public function isActive(): bool

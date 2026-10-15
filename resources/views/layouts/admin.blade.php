@@ -10,7 +10,7 @@
     <header class="p-4 bg-gray-900 text-white flex justify-between">
         <h1 class="font-bold">Pengelola Kantin</h1>
         <nav class="space-x-4">
-            <a href="#">Tenant</a>
+            <a href="{{ route('admin.tenants.index') }}">Tenant</a>
             <a href="#">Meja & QR</a>
             <a href="#">Pencairan Dana</a>
         </nav>
