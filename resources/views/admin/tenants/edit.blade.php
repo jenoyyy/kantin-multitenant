@@ -17,19 +17,33 @@
         </ul>
     @endif
 
+    @php $isActive = $tenant->status === 'active'; @endphp
+
     <dl class="mb-6 text-sm space-y-1">
         <div><dt class="inline font-medium">Kode:</dt> <dd class="inline">{{ $tenant->code }}</dd></div>
         <div><dt class="inline font-medium">Slug:</dt> <dd class="inline">{{ $tenant->slug }}</dd></div>
-        <div><dt class="inline font-medium">Status:</dt> <dd class="inline">{{ $tenant->status }}</dd></div>
+        <div>
+            <dt class="inline font-medium">Status:</dt>
+            <dd class="inline">{{ $isActive ? 'AKTIF' : 'NONAKTIF' }}</dd>
+            @can('update', $tenant)
+                <form class="inline ms-2" method="POST" action="{{ route('admin.tenants.status', $tenant) }}"
+                      onsubmit="return confirm('{{ $isActive ? 'Nonaktifkan' : 'Aktifkan' }} {{ $tenant->display_name }}?')">
+                    @csrf
+                    <input type="hidden" name="status" value="{{ $isActive ? 'inactive' : 'active' }}">
+                    <button type="submit" class="text-red-700 underline">{{ $isActive ? 'Nonaktifkan' : 'Aktifkan' }}</button>
+                </form>
+            @endcan
+        </div>
         <div><dt class="inline font-medium">Saldo:</dt> <dd class="inline">Rp {{ number_format((int) ($tenant->balance?->amount ?? 0), 0, ',', '.') }}</dd></div>
     </dl>
 
     <h3 class="font-semibold mb-2">Riwayat komisi</h3>
-    <ul class="list-disc list-inside text-sm">
+    <ul class="list-disc list-inside text-sm" data-test="commission-history">
         @foreach ($commissions as $c)
             <li>
-                {{ number_format((float) $c->commission_rate * 100, 2) }}%
-                — {{ $c->valid_from }} s/d {{ $c->valid_to ?? 'sekarang' }}
+                {{ rtrim(rtrim(number_format((float) $c->commission_rate * 100, 2, ',', '.'), '0'), ',') }}%
+                — berlaku {{ $c->valid_from->format('d M Y H:i') }}
+                s/d {{ $c->valid_to ? $c->valid_to->format('d M Y H:i') : 'sekarang' }}
             </li>
         @endforeach
     </ul>
@@ -42,14 +56,28 @@
                 <input class="border rounded p-2" id="commission_rate" name="commission_rate" type="number" step="0.01" min="0" max="100" required>
             </div>
             <div>
-                <label class="block text-sm font-medium" for="effective_at">Berlaku sejak</label>
-                <input class="border rounded p-2" id="effective_at" name="effective_at" type="datetime-local" required>
+                <label class="block text-sm font-medium" for="effective_at">Berlaku sejak (hanya masa mendatang)</label>
+                <input class="border rounded p-2" id="effective_at" name="effective_at" type="datetime-local" min="{{ now()->format('Y-m-d\TH:i') }}" required>
             </div>
             <button class="px-4 py-2 bg-gray-900 text-white rounded" type="submit">Jadwalkan</button>
         </form>
+        <p class="mt-2 text-xs text-gray-600">Versi baru berlaku mulai tanggal tersebut. Order lama menyimpan snapshot komisi sehingga tidak berubah.</p>
     @endcan
 
-        <section class="mt-8">
+    <h4 class="mt-4 text-xs font-semibold uppercase tracking-wide text-gray-500">Pengelola yang mengubah komisi</h4>
+    <ul class="mt-1 space-y-1 text-sm" data-test="commission-actors">
+        @forelse ($commissionLogs as $log)
+            <li>
+                {{ $log->created_at?->format('d M Y H:i') }}
+                · oleh {{ $actorNames[$log->actor_id] ?? 'sistem' }}
+                · {{ $log->action }}
+            </li>
+        @empty
+            <li class="text-gray-500">Belum ada perubahan komisi.</li>
+        @endforelse
+    </ul>
+
+    <section class="mt-8">
         <h3 class="font-semibold mb-2">Rekening Bank</h3>
 
         <ul class="space-y-2 text-sm">
@@ -100,7 +128,7 @@
             </form>
         @endcan
     </section>
-    
+
     <section class="mt-8">
         <h3 class="font-semibold mb-2">Operator / Role</h3>
 

@@ -36,6 +36,20 @@ class AdminManagementTest extends TestCase
         return Tenant::factory()->create(array_merge(['canteen_id' => $canteen->id], $attrs));
     }
 
+    /**
+     * Payload pembuatan tenant yang lengkap: identitas, penanggung jawab, dan rekening.
+     *
+     * @return array<string, string>
+     */
+    private function payload(array $overrides = []): array
+    {
+        return array_merge([
+            'display_name' => 'Warung Bu Rina', 'code' => 'RINA', 'slug' => 'warung-bu-rina', 'commission_rate' => '10',
+            'pic_name' => 'Rina S.', 'pic_email' => 'rina@kantin.test',
+            'bank_name' => 'BCA', 'account_holder_name' => 'Rina Sari', 'account_number' => '1234566721',
+        ], $overrides);
+    }
+
     public function test_only_canteen_manager_can_see_tenant_index(): void
     {
         $canteen = Canteen::factory()->create();
@@ -53,9 +67,9 @@ class AdminManagementTest extends TestCase
         $canteen = Canteen::factory()->create();
         $this->actingAs($this->managerFor($canteen));
 
-        $this->post(route('admin.tenants.store'), [
+        $this->post(route('admin.tenants.store'), $this->payload([
             'display_name' => 'Bakso Enak', 'code' => 'BAKSO', 'slug' => 'bakso', 'commission_rate' => '15',
-        ])->assertRedirect();
+        ]))->assertRedirect();
 
         $tenant = Tenant::where('code', 'BAKSO')->firstOrFail();
         $this->assertSame(1, CommissionScheme::where('tenant_id', $tenant->id)->whereNull('valid_to')->count());
@@ -73,9 +87,9 @@ class AdminManagementTest extends TestCase
         $this->tenantIn($canteen, ['code' => 'DUP']);
 
         $this->actingAs($manager);
-        $this->post(route('admin.tenants.store'), [
+        $this->post(route('admin.tenants.store'), $this->payload([
             'display_name' => 'X', 'code' => 'DUP', 'slug' => 'x', 'commission_rate' => '10',
-        ])->assertSessionHasErrors('code');
+        ]))->assertSessionHasErrors('code');
     }
 
     public function test_commission_schedule_is_effective_dated(): void
@@ -200,9 +214,9 @@ class AdminManagementTest extends TestCase
         $canteen = Canteen::factory()->create();
         $this->actingAs($this->managerFor($canteen));
 
-        $this->post(route('admin.tenants.store'), [
+        $this->post(route('admin.tenants.store'), $this->payload([
             'display_name' => 'Y', 'code' => 'YY', 'slug' => 'yy', 'commission_rate' => '12',
-        ])->assertRedirect();
+        ]))->assertRedirect();
 
         $this->assertTrue(AuditLog::where('action', 'tenant.created')->where('target_type', 'Tenant')->exists());
     }

@@ -50,11 +50,11 @@ class Tenant extends Model
         return $this->hasMany(TenantUserRole::class);
     }
 
-        public function bankAccounts(): HasMany
+    public function bankAccounts(): HasMany
     {
         return $this->hasMany(TenantBankAccount::class);
     }
-    
+
     public function balance(): HasOne
     {
         return $this->hasOne(TenantBalance::class);

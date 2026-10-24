@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\DashboardRedirectController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
-Route::view('dashboard', 'dashboard')
+Route::get('dashboard', DashboardRedirectController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 

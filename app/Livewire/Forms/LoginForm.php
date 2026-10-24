@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\User;
+use App\Support\Auth\LoginLockout;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -22,51 +24,62 @@ class LoginForm extends Form
     public bool $remember = false;
 
     /**
-     * Attempt to authenticate the request's credentials.
+     * UC-19: verifikasi kredensial + status akun, pesan generik, dan penguncian per akun
+     * (5x gagal/10 menit -> terkunci 15 menit).
      *
      * @throws ValidationException
      */
     public function authenticate(): void
     {
-        $this->ensureIsNotRateLimited();
+        $this->ensureIpIsNotRateLimited();
 
-        if (! Auth::attempt($this->only(['email', 'password']), $this->remember)) {
-            RateLimiter::hit($this->throttleKey());
+        $lockout = app(LoginLockout::class);
 
+        if ($lockout->isLocked($this->email)) {
             throw ValidationException::withMessages([
-                'form.email' => trans('auth.failed'),
+                'form.email' => 'Akun terkunci sementara karena terlalu banyak percobaan gagal. Coba lagi dalam '.$lockout->minutesRemaining($this->email).' menit.',
             ]);
         }
 
-        RateLimiter::clear($this->throttleKey());
+        $user = User::query()->where('email', $this->email)->first();
+
+        if ($user !== null && $user->status === 'active' && Hash::check($this->password, $user->password)) {
+            $lockout->clear($this->email);
+            RateLimiter::clear($this->ipKey());
+            Auth::login($user, $this->remember);
+
+            return;
+        }
+
+        RateLimiter::hit($this->ipKey());
+        $lockout->recordFailure($this->email);
+
+        // Pesan sama untuk surel tak dikenal, sandi salah, dan akun nonaktif.
+        throw ValidationException::withMessages([
+            'form.email' => 'Surel atau kata sandi tidak sesuai.',
+        ]);
     }
 
     /**
-     * Ensure the authentication request is not rate limited.
+     * Lapis per-IP terhadap brute force massal (20 percobaan/menit).
      */
-    protected function ensureIsNotRateLimited(): void
+    protected function ensureIpIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (! RateLimiter::tooManyAttempts($this->ipKey(), 20)) {
             return;
         }
 
         event(new Lockout(request()));
 
-        $seconds = RateLimiter::availableIn($this->throttleKey());
+        $seconds = RateLimiter::availableIn($this->ipKey());
 
         throw ValidationException::withMessages([
-            'form.email' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
+            'form.email' => 'Terlalu banyak percobaan dari perangkat ini. Coba lagi dalam '.$seconds.' detik.',
         ]);
     }
 
-    /**
-     * Get the authentication rate limiting throttle key.
-     */
-    protected function throttleKey(): string
+    protected function ipKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return 'login-ip:'.(request()->ip() ?? 'unknown');
     }
 }

@@ -4,6 +4,7 @@ use App\Modules\Admin\Http\Controllers\AdminBankAccountController;
 use App\Modules\Admin\Http\Controllers\AdminCommissionController;
 use App\Modules\Admin\Http\Controllers\AdminTenantController;
 use App\Modules\Admin\Http\Controllers\AdminTenantRoleController;
+use App\Modules\Admin\Http\Controllers\AdminTenantStatusController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/dashboard', function () {
@@ -14,6 +15,9 @@ Route::get('/tenants', [AdminTenantController::class, 'index'])->name('tenants.i
 Route::get('/tenants/create', [AdminTenantController::class, 'create'])->name('tenants.create');
 Route::post('/tenants', [AdminTenantController::class, 'store'])->name('tenants.store');
 Route::get('/tenants/{tenant}/edit', [AdminTenantController::class, 'edit'])->name('tenants.edit');
+
+// UC-21 alur 3a: aktifkan / nonaktifkan tenant.
+Route::post('/tenants/{tenant}/status', AdminTenantStatusController::class)->name('tenants.status');
 
 Route::post('/tenants/{tenant}/roles', [AdminTenantRoleController::class, 'store'])->name('tenants.roles.store');
 Route::delete('/tenants/{tenant}/roles/{user}', [AdminTenantRoleController::class, 'destroy'])->name('tenants.roles.destroy');
