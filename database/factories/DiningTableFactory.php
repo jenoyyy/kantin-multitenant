@@ -20,8 +20,10 @@ class DiningTableFactory extends Factory
     {
         return [
             'canteen_id' => Canteen::factory(),
-            'label' => strtoupper($this->faker->unique()->lexify('T-??')),
-            'status' => 'available',
+            'code' => strtoupper($this->faker->unique()->lexify('M-????')),
+            'label' => 'Meja '.$this->faker->unique()->numberBetween(1, 99999),
+            'zone' => null,
+            'status' => 'active',
         ];
     }
 }

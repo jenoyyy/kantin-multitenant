@@ -2,29 +2,40 @@
 
 namespace App\Models;
 
+use Database\Factories\DiningTableFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class DiningTable extends Model
 {
+    /** @use HasFactory<DiningTableFactory> */
     use HasFactory;
 
-    protected function casts(): array
+    protected $fillable = ['canteen_id', 'code', 'label', 'zone', 'status'];
+
+    public function isActive(): bool
     {
-        return [
-            'status' => 'string',
-        ];
+        return $this->status === 'active';
     }
 
+    /** @return BelongsTo<Canteen, $this> */
     public function canteen(): BelongsTo
     {
         return $this->belongsTo(Canteen::class);
     }
 
-    public function sessions(): HasMany
+    /** @return HasMany<TableQrToken, $this> */
+    public function qrTokens(): HasMany
     {
-        return $this->hasMany(TableSession::class);
+        return $this->hasMany(TableQrToken::class);
+    }
+
+    /** @return HasOne<TableQrToken, $this> */
+    public function activeToken(): HasOne
+    {
+        return $this->hasOne(TableQrToken::class)->active()->latestOfMany();
     }
 }
