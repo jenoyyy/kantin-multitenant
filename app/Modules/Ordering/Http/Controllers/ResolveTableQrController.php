@@ -3,23 +3,38 @@
 namespace App\Modules\Ordering\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Catalog\Services\TenantOpeningHours;
 use App\Modules\Ordering\Services\ResolveTableScan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Endpoint publik pemindaian QR: /q/{token} (rate limited). Membuat sesi anonim,
- * memasang cookie aman, lalu redirect ke katalog canteen yang ditemukan (bukan input klien).
- * Token invalid/expired/revoked -> 404 generik.
+ * memasang cookie aman, lalu redirect ke halaman sambutan canteen yang ditemukan (bukan input klien).
+ * Token invalid/expired/revoked -> 404 generik dengan saran menghubungi petugas (UC-02 alur 3a);
+ * kantin di luar jam operasional -> halaman jam buka tanpa membuat sesi (alur 3b).
  */
 final class ResolveTableQrController extends Controller
 {
-    public function __construct(private ResolveTableScan $resolver) {}
+    public function __construct(private ResolveTableScan $resolver, private TenantOpeningHours $hours) {}
 
-    public function __invoke(Request $request, string $token): RedirectResponse
+    public function __invoke(Request $request, string $token): RedirectResponse|Response
     {
         $result = $this->resolver->resolve($token);
-        abort_if($result === null, 404);
+
+        if ($result === null) {
+            return response()->view('customer.scan-invalid', [], 404);
+        }
+
+        if ($result['status'] === 'closed') {
+            return response()->view('customer.canteen-closed', [
+                'canteen' => $result['canteen'],
+                'table' => $result['table'],
+                'tenants' => $this->hours->activeTenants($result['canteen']),
+                'hours' => $this->hours,
+            ]);
+        }
 
         $cookie = cookie(
             name: 'customer_session',
@@ -34,7 +49,7 @@ final class ResolveTableQrController extends Controller
         );
 
         return redirect()
-            ->route('customer.home', ['canteen' => $result['canteen']->code])
+            ->route('customer.welcome', ['canteen' => $result['canteen']->code])
             ->withCookie($cookie);
     }
 }

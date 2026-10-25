@@ -86,7 +86,7 @@ class QrTableSessionTest extends TestCase
         $plain = app(QrTokenService::class)->issue($table);
 
         $response = $this->get(route('customer.scan', ['token' => $plain]));
-        $response->assertRedirect(route('customer.home', ['canteen' => $canteen->code]));
+        $response->assertRedirect(route('customer.welcome', ['canteen' => $canteen->code]));
 
         $session = CustomerSession::firstOrFail();
         $this->assertSame($canteen->id, $session->canteen_id);
