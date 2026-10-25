@@ -5,7 +5,7 @@
 @section('content')
     <div class="flex items-baseline gap-2 mb-4">
         <h2 class="text-xl font-semibold">Meja &amp; QR Code — {{ $canteen->name }}</h2>
-        <span class="text-sm text-gray-500">· {{ $tables->count() }} meja, {{ $tables->where('status', 'active')->count() }} aktif</span>
+        <span class="text-sm text-gray-500" data-test="table-summary">· {{ $tables->count() }} meja, {{ $tables->where('status', 'active')->count() }} aktif</span>
     </div>
 
     @if (session('status'))
@@ -39,14 +39,14 @@
     @endcan
 
     <div class="overflow-x-auto">
-        <table class="w-full min-w-[40rem] text-left border">
+        <table class="w-full min-w-[48rem] text-left border">
             <thead class="bg-gray-100">
                 <tr>
                     <th class="p-2">Meja</th>
                     <th class="p-2">Zona</th>
                     <th class="p-2">Status</th>
                     <th class="p-2">QR aktif</th>
-                    <th class="p-2"></th>
+                    <th class="p-2 text-right">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,16 +65,29 @@
                                 belum ada
                             @endif
                         </td>
-                        <td class="p-2 text-right">
-                            @can('rotateQr', $table)
-                                <form method="POST" action="{{ route('admin.tables.rotate', $table) }}"
-                                      @if ($table->activeToken) onsubmit="return confirm('Regenerasi QR {{ $table->label }}? QR cetakan lama langsung tidak berlaku.')" @endif>
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1 border rounded text-sm">
-                                        {{ $table->activeToken ? 'Rotate QR' : 'Terbitkan QR' }}
-                                    </button>
-                                </form>
-                            @endcan
+                        <td class="p-2">
+                            <div class="flex items-center justify-end gap-3">
+                                @can('rotateQr', $table)
+                                    @if ($table->status === 'active')
+                                        <form method="POST" action="{{ route('admin.tables.rotate', $table) }}"
+                                              @if ($table->activeToken) onsubmit="return confirm('Regenerasi QR {{ $table->label }}? QR cetakan lama langsung tidak berlaku.')" @endif>
+                                            @csrf
+                                            <button type="submit" class="px-3 py-1 border rounded text-sm">
+                                                {{ $table->activeToken ? 'Regenerasi & unduh QR' : 'Terbitkan & unduh QR' }}
+                                            </button>
+                                        </form>
+                                    @endif
+                                @endcan
+                                @can('update', $table)
+                                    <form method="POST" action="{{ route('admin.tables.status', $table) }}">
+                                        @csrf
+                                        <input type="hidden" name="status" value="{{ $table->status === 'active' ? 'inactive' : 'active' }}">
+                                        <button type="submit" class="text-sm font-medium text-red-700 hover:underline">
+                                            {{ $table->status === 'active' ? 'Nonaktifkan' : 'Aktifkan kembali' }}
+                                        </button>
+                                    </form>
+                                @endcan
+                            </div>
                         </td>
                     </tr>
                 @empty
@@ -84,5 +97,5 @@
         </table>
     </div>
 
-    <p class="mt-3 text-xs text-gray-500">Token QR berupa token acak ≥128 bit; URL tidak memuat ID meja maupun kantin.</p>
+    <p class="mt-3 text-xs text-gray-500">Token opaque unik ≥128 bit; URL tidak memuat ID meja maupun tenant. Regenerasi langsung menonaktifkan QR cetakan lama.</p>
 @endsection

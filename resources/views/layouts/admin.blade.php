@@ -7,7 +7,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-white min-h-screen">
-    <header class="p-4 bg-gray-900 text-white flex justify-between">
+    <header class="p-4 bg-gray-900 text-white flex justify-between print:hidden">
         <h1 class="font-bold">Pengelola Kantin</h1>
         <nav class="space-x-4">
             <a href="{{ route('admin.tenants.index') }}">Tenant</a>
