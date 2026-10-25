@@ -18,4 +18,4 @@ ulang QR baru. Token lama langsung tidak berlaku (404 generik).
 ## Catatan implementasi
 - Tabel lama `table_tokens` dan `table_sessions` (Modul 3) tidak dipakai lagi; digantikan
   `table_qr_tokens` dan `customer_sessions`. Belum dihapus agar riwayat migrasi tetap utuh.
-- Gambar QR siap cetak (SVG), penonaktifan meja, halaman sambutan, dan jam operasional ditambahkan di Tahap 8.
+- Gambar QR siap cetak (SVG, bacon/bacon-qr-code), penonaktifan meja, halaman sambutan, dan jam operasional (tabel `operating_hours`) sudah ada sejak Tahap 8. Tenant tanpa jam operasional dianggap buka.
