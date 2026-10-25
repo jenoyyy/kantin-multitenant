@@ -11,7 +11,7 @@
         <h1 class="font-bold">Pengelola Kantin</h1>
         <nav class="space-x-4">
             <a href="{{ route('admin.tenants.index') }}">Tenant</a>
-            <a href="#">Meja & QR</a>
+                        <a href="{{ route('admin.tables.index') }}">Meja &amp; QR</a>
             <a href="#">Pencairan Dana</a>
         </nav>
     </header>

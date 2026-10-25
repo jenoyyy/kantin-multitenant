@@ -2,6 +2,7 @@
 
 use App\Modules\Admin\Http\Controllers\AdminBankAccountController;
 use App\Modules\Admin\Http\Controllers\AdminCommissionController;
+use App\Modules\Admin\Http\Controllers\AdminDiningTableController;
 use App\Modules\Admin\Http\Controllers\AdminTenantController;
 use App\Modules\Admin\Http\Controllers\AdminTenantRoleController;
 use App\Modules\Admin\Http\Controllers\AdminTenantStatusController;
@@ -27,3 +28,9 @@ Route::post('/tenants/{tenant}/commission', [AdminCommissionController::class, '
 Route::post('/tenants/{tenant}/bank-accounts', [AdminBankAccountController::class, 'store'])->name('tenants.bank.store');
 Route::post('/tenants/{tenant}/bank-accounts/{account}/verify', [AdminBankAccountController::class, 'verify'])->name('tenants.bank.verify');
 Route::post('/tenants/{tenant}/bank-accounts/{account}/primary', [AdminBankAccountController::class, 'primary'])->name('tenants.bank.primary');
+
+// UC-22: meja & QR (aksi rotate/QR/status ditambahkan di Tahap 4 dan 8).
+Route::get('/tables', [AdminDiningTableController::class, 'index'])->name('tables.index');
+Route::post('/tables', [AdminDiningTableController::class, 'store'])->name('tables.store');
+Route::post('/tables/{table}/rotate', [AdminDiningTableController::class, 'rotate'])->name('tables.rotate');
+Route::get('/tables/{table}/qr', [AdminDiningTableController::class, 'qr'])->name('tables.qr');
